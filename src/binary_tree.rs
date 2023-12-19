@@ -16,43 +16,46 @@ impl<'a> Node<'a> {
         }
     }
 
-    fn new_child(node: Self) -> NodeChild<'a> {
-        Some(Box::new(node))
+    pub fn to_child(self) -> NodeChild<'a> {
+        Some(Box::new(self))
     }
-}
 
-fn print_tree_paths_rec(node: &NodeChild, path_text: String) {
-    if let Some(node) = node {
-        let path_text = format!("{}{path_text}", node.text);
+    pub fn print_tree_paths(&self) {
+        self.print_tree_paths_node("".to_owned())
+    }
 
-        if node.left_child.is_none() && node.right_child.is_none() {
+    fn print_tree_paths_node(&self, path_text: String) {
+        let path_text = format!("{}{path_text}", self.text);
+
+        if self.left_child.is_none() && self.right_child.is_none() {
             println!("{path_text}");
             return;
         }
 
-        print_tree_paths_rec(&node.left_child, path_text.clone());
-        print_tree_paths_rec(&node.right_child, path_text);
+        print_tree_paths_child(&self.left_child, path_text.clone());
+        print_tree_paths_child(&self.right_child, path_text);
     }
 }
 
-pub fn print_tree_paths(root: Node) {
-    let root = &Node::new_child(root);
-    print_tree_paths_rec(root, "".to_owned());
+fn print_tree_paths_child(node: &NodeChild, path_text: String) {
+    if let Some(node) = node {
+        node.print_tree_paths_node(path_text)
+    }
 }
 
 pub fn get_example_tree<'a>() -> Node<'a> {
     let left_branch = Node::new("google", None, None);
 
     let right_branch = Node::new("studia", None, None);
-    let right_child = Node::new(".pw", Node::new_child(right_branch), None);
-    let right_child = Node::new(".edu", None, Node::new_child(right_child));
+    let right_child = Node::new(".pw", right_branch.to_child(), None);
+    let right_child = Node::new(".edu", None, Node::to_child(right_child));
 
     let root = Node::new(
         ".pl",
-        Node::new_child(left_branch),
-        Node::new_child(right_child),
+        Node::to_child(left_branch),
+        Node::to_child(right_child),
     );
-    let root = Node::new(".", Node::new_child(root), None);
+    let root = Node::new(".", Node::to_child(root), None);
 
     root
 }

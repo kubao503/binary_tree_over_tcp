@@ -3,5 +3,6 @@ use binary_tree::*;
 
 fn main() {
     let root = get_example_tree();
-    print_tree_paths(root.clone());
+    root.print_tree_paths();
+    println!("{}", root.text);
 }
