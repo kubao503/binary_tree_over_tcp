@@ -8,16 +8,24 @@ pub struct Node<'a> {
 type NodeChild<'a> = Option<Box<Node<'a>>>;
 
 impl<'a> Node<'a> {
-    pub fn new(value: &'a str, left_child: NodeChild<'a>, right_child: NodeChild<'a>) -> Self {
+    pub fn new(value: &'a str) -> Self {
         Self {
             text: value,
-            left_child,
-            right_child,
+            left_child: None,
+            right_child: None,
         }
     }
 
-    pub fn to_child(self) -> NodeChild<'a> {
-        Some(Box::new(self))
+    fn new_child(value: &'a str) -> NodeChild<'a> {
+        Some(Box::new(Self::new(value)))
+    }
+
+    fn left(&mut self) -> &mut Self {
+        self.left_child.as_mut().unwrap()
+    }
+
+    fn right(&mut self) -> &mut Self {
+        self.right_child.as_mut().unwrap()
     }
 
     pub fn print_tree_paths(&self) {
@@ -44,18 +52,11 @@ fn print_tree_paths_child(node: &NodeChild, path_text: &str) {
 }
 
 pub fn get_example_tree<'a>() -> Node<'a> {
-    let left_branch = Node::new("google", None, None);
-
-    let right_branch = Node::new("studia", None, None);
-    let right_child = Node::new(".pw", right_branch.to_child(), None);
-    let right_child = Node::new(".edu", None, Node::to_child(right_child));
-
-    let root = Node::new(
-        ".pl",
-        Node::to_child(left_branch),
-        Node::to_child(right_child),
-    );
-    let root = Node::new(".", Node::to_child(root), None);
+    let mut root = Node::new(".");
+    root.left_child = Node::new_child(".pl");
+    root.left().left_child = Node::new_child(".google");
+    root.left().right_child = Node::new_child(".edu");
+    root.left().right().left_child = Node::new_child(".pw");
 
     root
 }
