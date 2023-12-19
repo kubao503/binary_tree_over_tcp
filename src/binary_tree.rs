@@ -21,10 +21,10 @@ impl<'a> Node<'a> {
     }
 
     pub fn print_tree_paths(&self) {
-        self.print_tree_paths_node("".to_owned())
+        self.print_tree_paths_node("")
     }
 
-    fn print_tree_paths_node(&self, path_text: String) {
+    fn print_tree_paths_node(&self, path_text: &str) {
         let path_text = format!("{}{path_text}", self.text);
 
         if self.left_child.is_none() && self.right_child.is_none() {
@@ -32,12 +32,12 @@ impl<'a> Node<'a> {
             return;
         }
 
-        print_tree_paths_child(&self.left_child, path_text.clone());
-        print_tree_paths_child(&self.right_child, path_text);
+        print_tree_paths_child(&self.left_child, &path_text);
+        print_tree_paths_child(&self.right_child, &path_text);
     }
 }
 
-fn print_tree_paths_child(node: &NodeChild, path_text: String) {
+fn print_tree_paths_child(node: &NodeChild, path_text: &str) {
     if let Some(node) = node {
         node.print_tree_paths_node(path_text)
     }
