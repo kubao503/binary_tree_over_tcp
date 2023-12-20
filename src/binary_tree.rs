@@ -1,6 +1,6 @@
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Node {
-    pub text: String,
+    text: String,
     pub left_child: NodeChild,
     pub right_child: NodeChild,
 }
@@ -55,6 +55,7 @@ fn print_tree_paths_child(node: &NodeChild, path_text: &str) {
     }
 }
 
+#[allow(dead_code)]
 pub fn get_example_tree() -> Node {
     let mut root = Node::new(".".to_owned());
     root.left_child = Node::new_child(".pl".to_owned());
