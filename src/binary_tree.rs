@@ -26,11 +26,11 @@ impl Node {
     }
 
     fn left(&mut self) -> &mut Self {
-        self.left_child.as_mut().unwrap()
+        self.left_child.as_mut().expect("Child is None")
     }
 
     fn right(&mut self) -> &mut Self {
-        self.right_child.as_mut().unwrap()
+        self.right_child.as_mut().expect("Child is None")
     }
 
     pub fn print_tree_paths(&self) {
@@ -93,3 +93,6 @@ impl TreeCreator {
         self.nodes.pop().unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests;
