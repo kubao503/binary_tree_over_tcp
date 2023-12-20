@@ -1,10 +1,8 @@
 mod binary_tree;
 
-use binary_tree::Node;
+use binary_tree::*;
 use gethostname::gethostname;
 use std::{io::Read, net::*};
-
-struct NodeData(i32, i32, String);
 
 const INT_SIZE: usize = 4;
 
@@ -19,15 +17,15 @@ fn main() {
 }
 
 fn handle_connection(mut stream: TcpStream) {
-    let mut nodes = Vec::new();
+    let mut tree_creator = TreeCreator::new();
     let node_count = read_node_count(&mut stream);
 
     for _ in 0..node_count {
         let node_data = read_node_data(&mut stream);
-        add_node(&mut nodes, node_data);
+        tree_creator.add_node(node_data);
     }
 
-    let root = nodes.pop().unwrap();
+    let root = tree_creator.get_tree();
     root.print_tree_paths();
 }
 
@@ -57,17 +55,4 @@ fn read_node_data(stream: &mut TcpStream) -> NodeData {
     let text = String::from_utf8(text).unwrap();
 
     NodeData(left_idx, right_idx, text)
-}
-
-fn add_node<'a>(nodes: &mut Vec<Node>, node_data: NodeData) {
-    let NodeData(left_idx, right_idx, text) = node_data;
-
-    let mut node = Node::new(text);
-    if left_idx >= 0 {
-        node.left_child = nodes[left_idx as usize].clone().to_child()
-    }
-    if right_idx >= 0 {
-        node.right_child = nodes[right_idx as usize].clone().to_child();
-    }
-    nodes.push(node);
 }

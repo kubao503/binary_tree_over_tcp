@@ -6,6 +6,7 @@ pub struct Node {
 }
 
 type NodeChild = Option<Box<Node>>;
+pub struct NodeData(pub i32, pub i32, pub String);
 
 impl Node {
     pub fn new(value: String) -> Self {
@@ -64,4 +65,31 @@ pub fn get_example_tree() -> Node {
     root.left().right().left_child = Node::new_child(".pw".to_owned());
 
     root
+}
+
+pub struct TreeCreator {
+    nodes: Vec<Node>,
+}
+
+impl TreeCreator {
+    pub fn new() -> Self {
+        Self { nodes: Vec::new() }
+    }
+
+    pub fn add_node<'a>(&mut self, node_data: NodeData) {
+        let NodeData(left_idx, right_idx, text) = node_data;
+
+        let mut node = Node::new(text);
+        if left_idx >= 0 {
+            node.left_child = self.nodes[left_idx as usize].clone().to_child()
+        }
+        if right_idx >= 0 {
+            node.right_child = self.nodes[right_idx as usize].clone().to_child();
+        }
+        self.nodes.push(node);
+    }
+
+    pub fn get_tree(mut self) -> Node {
+        self.nodes.pop().unwrap()
+    }
 }
