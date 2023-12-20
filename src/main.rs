@@ -8,17 +8,18 @@ const INT_SIZE: usize = 4;
 
 fn main() {
     let host_name = format!("{}:8000", gethostname().to_str().unwrap());
-    println!("{}", host_name);
+    println!("Will listen on {host_name}");
 
     let listener = TcpListener::bind(host_name).expect("Failed to bind");
-    if let Ok((stream, _)) = listener.accept() {
+    if let Ok((stream, address)) = listener.accept() {
+        println!("Connection from {address}");
         handle_connection(stream);
     }
 }
 
 fn handle_connection(mut stream: TcpStream) {
-    let mut tree_creator = TreeCreator::new();
     let node_count = read_node_count(&mut stream);
+    let mut tree_creator = TreeCreator::new(node_count as usize);
 
     for _ in 0..node_count {
         let node_data = read_node_data(&mut stream);

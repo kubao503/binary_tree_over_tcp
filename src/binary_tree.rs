@@ -69,11 +69,15 @@ pub fn get_example_tree() -> Node {
 
 pub struct TreeCreator {
     nodes: Vec<Node>,
+    has_parent: Vec<bool>,
 }
 
 impl TreeCreator {
-    pub fn new() -> Self {
-        Self { nodes: Vec::new() }
+    pub fn new(node_count: usize) -> Self {
+        Self {
+            nodes: Vec::with_capacity(node_count),
+            has_parent: vec![false; node_count],
+        }
     }
 
     pub fn add_node<'a>(&mut self, node_data: NodeData) {
@@ -81,15 +85,25 @@ impl TreeCreator {
 
         let mut node = Node::new(text);
         if left_idx >= 0 {
-            node.left_child = self.nodes[left_idx as usize].clone().to_child()
+            node.left_child = self.nodes[left_idx as usize].clone().to_child();
+            self.has_parent[left_idx as usize] = true;
         }
         if right_idx >= 0 {
             node.right_child = self.nodes[right_idx as usize].clone().to_child();
+            self.has_parent[right_idx as usize] = true;
         }
         self.nodes.push(node);
     }
 
+    fn validate_tree(&mut self) {
+        self.has_parent.pop();
+        if !self.has_parent.iter().all(|&x| x) {
+            panic!("Not all non-root nodes have parent");
+        }
+    }
+
     pub fn get_tree(mut self) -> Node {
+        self.validate_tree();
         self.nodes.pop().unwrap()
     }
 }
