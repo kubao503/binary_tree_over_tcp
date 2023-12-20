@@ -1,14 +1,14 @@
-#[derive(Clone)]
-pub struct Node<'a> {
-    pub text: &'a str,
-    pub left_child: NodeChild<'a>,
-    pub right_child: NodeChild<'a>,
+#[derive(Clone, Debug)]
+pub struct Node {
+    pub text: String,
+    pub left_child: NodeChild,
+    pub right_child: NodeChild,
 }
 
-type NodeChild<'a> = Option<Box<Node<'a>>>;
+type NodeChild = Option<Box<Node>>;
 
-impl<'a> Node<'a> {
-    pub fn new(value: &'a str) -> Self {
+impl Node {
+    pub fn new(value: String) -> Self {
         Self {
             text: value,
             left_child: None,
@@ -16,8 +16,12 @@ impl<'a> Node<'a> {
         }
     }
 
-    fn new_child(value: &'a str) -> NodeChild<'a> {
+    fn new_child(value: String) -> NodeChild {
         Some(Box::new(Self::new(value)))
+    }
+
+    pub fn to_child(self) -> NodeChild {
+        Some(Box::new(self))
     }
 
     fn left(&mut self) -> &mut Self {
@@ -51,12 +55,12 @@ fn print_tree_paths_child(node: &NodeChild, path_text: &str) {
     }
 }
 
-pub fn get_example_tree<'a>() -> Node<'a> {
-    let mut root = Node::new(".");
-    root.left_child = Node::new_child(".pl");
-    root.left().left_child = Node::new_child(".google");
-    root.left().right_child = Node::new_child(".edu");
-    root.left().right().left_child = Node::new_child(".pw");
+pub fn get_example_tree() -> Node {
+    let mut root = Node::new(".".to_owned());
+    root.left_child = Node::new_child(".pl".to_owned());
+    root.left().left_child = Node::new_child(".google".to_owned());
+    root.left().right_child = Node::new_child(".edu".to_owned());
+    root.left().right().left_child = Node::new_child(".pw".to_owned());
 
     root
 }
