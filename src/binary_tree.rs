@@ -70,6 +70,7 @@ pub fn get_example_tree() -> Node {
 pub struct TreeCreator {
     nodes: Vec<Node>,
     has_parent: Vec<bool>,
+    node_count: usize,
 }
 
 impl TreeCreator {
@@ -77,6 +78,7 @@ impl TreeCreator {
         Self {
             nodes: Vec::with_capacity(node_count),
             has_parent: vec![false; node_count],
+            node_count,
         }
     }
 
@@ -96,6 +98,9 @@ impl TreeCreator {
     }
 
     fn validate_tree(&mut self) {
+        if self.nodes.len() != self.node_count {
+            panic!("Not all nodes are present");
+        }
         self.has_parent.pop();
         if !self.has_parent.iter().all(|&x| x) {
             panic!("Not all non-root nodes have parent");
