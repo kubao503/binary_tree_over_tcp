@@ -1,4 +1,3 @@
-#[derive(Clone)]
 pub struct Node {
     text: String,
     pub left_child: NodeChild,
@@ -68,8 +67,7 @@ pub fn get_example_tree() -> Node {
 }
 
 pub struct TreeCreator {
-    nodes: Vec<Node>,
-    node_referenced: Vec<bool>,
+    nodes: Vec<Option<Node>>,
     node_count: usize,
 }
 
@@ -77,7 +75,6 @@ impl TreeCreator {
     pub fn new(node_count: usize) -> Self {
         Self {
             nodes: Vec::with_capacity(node_count),
-            node_referenced: vec![false; node_count],
             node_count,
         }
     }
@@ -87,36 +84,34 @@ impl TreeCreator {
 
         let mut node = Node::new(text);
         if left_idx >= 0 {
-            self.update_node_referenced(left_idx as usize);
-            node.left_child = self.nodes[left_idx as usize].clone().to_child();
+            let child = self.become_parent_of(left_idx as usize);
+            node.left_child = child.to_child();
         }
         if right_idx >= 0 {
-            self.update_node_referenced(right_idx as usize);
-            node.right_child = self.nodes[right_idx as usize].clone().to_child();
+            let child = self.become_parent_of(right_idx as usize);
+            node.right_child = child.to_child();
         }
-        self.nodes.push(node);
+        self.nodes.push(Some(node));
     }
 
-    fn update_node_referenced(&mut self, child_idx: usize) {
-        let old_has_ref = std::mem::replace(&mut self.node_referenced[child_idx], true);
-        if old_has_ref {
-            panic!("Two references to the same node")
-        }
+    fn become_parent_of(&mut self, child_index: usize) -> Node {
+        std::mem::replace(&mut self.nodes[child_index as usize], None)
+            .expect("Two references to the same node")
     }
 
     fn validate_tree(&mut self) {
         if self.nodes.len() != self.node_count {
             panic!("Not all nodes are present");
         }
-        self.node_referenced.pop();
-        if !self.node_referenced.iter().all(|&x| x) {
+        let all_without_last = self.nodes.split_last().unwrap().1;
+        if all_without_last.iter().any(|x| x.is_some()) {
             panic!("Not all non-root nodes have parent");
         }
     }
 
     pub fn get_tree(mut self) -> Node {
         self.validate_tree();
-        self.nodes.pop().unwrap()
+        self.nodes.pop().unwrap().unwrap()
     }
 }
 
