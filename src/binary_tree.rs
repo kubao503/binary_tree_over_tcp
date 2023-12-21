@@ -69,7 +69,7 @@ pub fn get_example_tree() -> Node {
 
 pub struct TreeCreator {
     nodes: Vec<Node>,
-    has_parent: Vec<bool>,
+    node_referenced: Vec<bool>,
     node_count: usize,
 }
 
@@ -77,7 +77,7 @@ impl TreeCreator {
     pub fn new(node_count: usize) -> Self {
         Self {
             nodes: Vec::with_capacity(node_count),
-            has_parent: vec![false; node_count],
+            node_referenced: vec![false; node_count],
             node_count,
         }
     }
@@ -87,28 +87,29 @@ impl TreeCreator {
 
         let mut node = Node::new(text);
         if left_idx >= 0 {
-            let old_has_parent = std::mem::replace(&mut self.has_parent[left_idx as usize], true);
-            if old_has_parent {
-                panic!("Two references to the same node")
-            }
+            self.update_node_referenced(left_idx as usize);
             node.left_child = self.nodes[left_idx as usize].clone().to_child();
         }
         if right_idx >= 0 {
-            let old_has_parent = std::mem::replace(&mut self.has_parent[right_idx as usize], true);
-            if old_has_parent {
-                panic!("Two references to the same node")
-            }
+            self.update_node_referenced(right_idx as usize);
             node.right_child = self.nodes[right_idx as usize].clone().to_child();
         }
         self.nodes.push(node);
+    }
+
+    fn update_node_referenced(&mut self, child_idx: usize) {
+        let old_has_ref = std::mem::replace(&mut self.node_referenced[child_idx], true);
+        if old_has_ref {
+            panic!("Two references to the same node")
+        }
     }
 
     fn validate_tree(&mut self) {
         if self.nodes.len() != self.node_count {
             panic!("Not all nodes are present");
         }
-        self.has_parent.pop();
-        if !self.has_parent.iter().all(|&x| x) {
+        self.node_referenced.pop();
+        if !self.node_referenced.iter().all(|&x| x) {
             panic!("Not all non-root nodes have parent");
         }
     }

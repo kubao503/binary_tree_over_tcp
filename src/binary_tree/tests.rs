@@ -63,7 +63,7 @@ fn test_tree_creator_right_child() {
 #[test]
 fn test_complex_tree() {
     let tree_creator = get_complex_tree_creator();
-    assert_eq!(tree_creator.has_parent, [true, false]);
+    assert_eq!(tree_creator.node_referenced, [true, false]);
 
     let mut root = tree_creator.get_tree();
     assert_eq!(root.left().text, "left child");
@@ -73,7 +73,7 @@ fn test_complex_tree() {
 #[should_panic(expected = "Not all non-root nodes have parent")]
 fn test_tree_conectivity() {
     let tree_creator = get_isolated_tree_creator();
-    assert_eq!(tree_creator.has_parent, [false, false]);
+    assert_eq!(tree_creator.node_referenced, [false, false]);
     tree_creator.get_tree();
 }
 
