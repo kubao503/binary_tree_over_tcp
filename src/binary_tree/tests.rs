@@ -83,3 +83,12 @@ fn test_unfinished_tree() {
     let tree_creator = get_unfinished_tree_creator();
     tree_creator.get_tree();
 }
+
+#[test]
+#[should_panic(expected = "Two references to the same node")]
+fn test_two_references_to_the_same_node() {
+    let mut tree_creator = get_complex_tree_creator();
+
+    let node_data = NodeData(0, 1, String::from("super root"));
+    tree_creator.add_node(node_data);
+}

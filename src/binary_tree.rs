@@ -87,12 +87,18 @@ impl TreeCreator {
 
         let mut node = Node::new(text);
         if left_idx >= 0 {
+            let old_has_parent = std::mem::replace(&mut self.has_parent[left_idx as usize], true);
+            if old_has_parent {
+                panic!("Two references to the same node")
+            }
             node.left_child = self.nodes[left_idx as usize].clone().to_child();
-            self.has_parent[left_idx as usize] = true;
         }
         if right_idx >= 0 {
+            let old_has_parent = std::mem::replace(&mut self.has_parent[right_idx as usize], true);
+            if old_has_parent {
+                panic!("Two references to the same node")
+            }
             node.right_child = self.nodes[right_idx as usize].clone().to_child();
-            self.has_parent[right_idx as usize] = true;
         }
         self.nodes.push(node);
     }
