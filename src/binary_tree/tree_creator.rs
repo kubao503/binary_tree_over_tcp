@@ -51,4 +51,4 @@ impl TreeCreator {
 }
 
 #[cfg(test)]
-mod tests;
+mod test_tree_creator;

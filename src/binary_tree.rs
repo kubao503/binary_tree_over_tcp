@@ -67,3 +67,6 @@ pub fn get_example_tree() -> Node {
 
     root
 }
+
+#[cfg(test)]
+mod test_binary_tree;
