@@ -1,6 +1,6 @@
 mod binary_tree;
 
-use binary_tree::*;
+use binary_tree::{tree_creator::TreeCreator, NodeData};
 use gethostname::gethostname;
 use std::{io::Read, net::*};
 
