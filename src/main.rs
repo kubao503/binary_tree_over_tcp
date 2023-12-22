@@ -1,6 +1,6 @@
 mod binary_tree;
 
-use binary_tree::{tree_creator::TreeCreator, NodeData};
+use binary_tree::{tree_creator::TreeCreator, NodeData, PrintLogger};
 use gethostname::gethostname;
 use std::{io::Read, net::*};
 
@@ -27,7 +27,7 @@ fn handle_connection(mut stream: TcpStream) {
     }
 
     let root = tree_creator.get_tree();
-    root.print_tree_paths();
+    root.print_tree_paths(&mut PrintLogger);
 }
 
 fn read_node_count(stream: &mut TcpStream) -> u32 {

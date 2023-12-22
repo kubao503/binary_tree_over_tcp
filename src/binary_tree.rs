@@ -34,26 +34,26 @@ impl Node {
         self.right_child.as_mut().expect("Child is None")
     }
 
-    pub fn print_tree_paths(&self) {
-        self.print_tree_paths_node("")
+    pub fn print_tree_paths(&self, logger: &mut impl Logger) {
+        self.print_tree_paths_node(logger, "")
     }
 
-    fn print_tree_paths_node(&self, path_text: &str) {
+    fn print_tree_paths_node(&self, logger: &mut impl Logger, path_text: &str) {
         let path_text = format!("{}{path_text}", self.text);
 
         if self.left_child.is_none() && self.right_child.is_none() {
-            println!("{path_text}");
+            logger.print(&path_text);
             return;
         }
 
-        print_tree_paths_child(&self.left_child, &path_text);
-        print_tree_paths_child(&self.right_child, &path_text);
+        print_tree_paths_child(logger, &self.left_child, &path_text);
+        print_tree_paths_child(logger, &self.right_child, &path_text);
     }
 }
 
-fn print_tree_paths_child(node: &NodeChild, path_text: &str) {
+fn print_tree_paths_child(logger: &mut impl Logger, node: &NodeChild, path_text: &str) {
     if let Some(node) = node {
-        node.print_tree_paths_node(path_text)
+        node.print_tree_paths_node(logger, path_text)
     }
 }
 
@@ -66,6 +66,18 @@ pub fn get_example_tree() -> Node {
     root.left().right().left_child = Node::new_child(".pw".to_owned());
 
     root
+}
+
+pub trait Logger {
+    fn print(&mut self, string: &str);
+}
+
+pub struct PrintLogger;
+
+impl Logger for PrintLogger {
+    fn print(&mut self, string: &str) {
+        println!("{string}");
+    }
 }
 
 #[cfg(test)]
