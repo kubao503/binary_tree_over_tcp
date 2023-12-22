@@ -19,7 +19,7 @@ fn main() {
 
 fn handle_connection(mut stream: TcpStream) {
     let node_count = read_node_count(&mut stream);
-    let mut tree_creator = TreeCreator::new(node_count as usize);
+    let mut tree_creator = TreeCreator::new(node_count.try_into().unwrap());
 
     for _ in 0..node_count {
         let node_data = read_node_data(&mut stream);
@@ -51,7 +51,7 @@ fn read_node_data(stream: &mut TcpStream) -> NodeData {
     stream.read(&mut right_idx).unwrap();
     let right_idx = i32::from_be_bytes(right_idx);
 
-    let mut text = vec![0u8; text_len as usize];
+    let mut text = vec![0u8; text_len.try_into().unwrap()];
     stream.read(&mut text).unwrap();
     let text = String::from_utf8(text).unwrap();
 

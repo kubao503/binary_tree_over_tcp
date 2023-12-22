@@ -81,21 +81,22 @@ impl TreeCreator {
 
     pub fn add_node<'a>(&mut self, node_data: NodeData) {
         let NodeData(left_idx, right_idx, text) = node_data;
-
         let mut node = Node::new(text);
-        if left_idx >= 0 {
-            let child = self.become_parent_of(left_idx as usize);
+
+        if let Ok(left_idx) = usize::try_from(left_idx) {
+            let child = self.become_parent_of(left_idx);
             node.left_child = child.to_child();
         }
-        if right_idx >= 0 {
-            let child = self.become_parent_of(right_idx as usize);
+        if let Ok(right_idx) = usize::try_from(right_idx) {
+            let child = self.become_parent_of(right_idx);
             node.right_child = child.to_child();
         }
+
         self.nodes.push(Some(node));
     }
 
     fn become_parent_of(&mut self, child_index: usize) -> Node {
-        std::mem::replace(&mut self.nodes[child_index as usize], None)
+        std::mem::replace(&mut self.nodes[child_index], None)
             .expect("Two references to the same node")
     }
 
