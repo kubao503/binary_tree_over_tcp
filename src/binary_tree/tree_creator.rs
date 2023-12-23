@@ -30,8 +30,8 @@ impl TreeCreator {
     }
 
     fn become_parent_of(&mut self, child_index: usize) -> Node {
-        std::mem::replace(&mut self.nodes[child_index], None)
-            .expect("Two references to the same node")
+        let child = self.nodes.get_mut(child_index).unwrap();
+        child.take().expect("Two references to the same node")
     }
 
     fn validate_tree(&mut self) {
