@@ -15,40 +15,30 @@ impl TreeCreator {
 
     pub fn add_node<'a>(&mut self, node_data: NodeData) -> Result<(), String> {
         let NodeData(left_idx, right_idx, text) = node_data;
-        let mut node = Node::new(text);
+        let mut new_node = Node::new(text);
 
         if let Ok(left_idx) = usize::try_from(left_idx) {
-            self.can_node_be_taken(left_idx)?;
-
-            let child = self.take_node(left_idx);
-            node.left_child = child.to_child();
+            let node = self.take_node(left_idx)?;
+            new_node.left_child = node.to_child();
         }
         if let Ok(right_idx) = usize::try_from(right_idx) {
-            self.can_node_be_taken(right_idx)?;
-
-            let child = self.take_node(right_idx);
-            node.right_child = child.to_child();
+            let node = self.take_node(right_idx)?;
+            new_node.right_child = node.to_child();
         }
 
-        self.nodes.push(Some(node));
+        self.nodes.push(Some(new_node));
         Ok(())
     }
 
-    fn can_node_be_taken(&self, index: usize) -> Result<&Node, String> {
-        match self.nodes.get(index) {
-            Some(node) => {
-                match node {
-                    None => Err(String::from("Two references to the same node")),
-                    Some(node) => Ok(node),
-                }
-            },
-            None => Err(format!("Invalid node index: {index}")),
-        }
-    }
-
-    fn take_node(&mut self, node_index: usize) -> Node {
-        let child = self.nodes.get_mut(node_index).expect("Invalid node index");
-        child.take().expect("Two references to the same node")
+    fn take_node(&mut self, index: usize) -> Result<Node, String> {
+        let node = self
+            .nodes
+            .get_mut(index)
+            .ok_or(format!("Invalid node index: {index}"));
+        node.and_then(|node| {
+            node.take()
+                .ok_or(String::from("Two references to the same node"))
+        })
     }
 
     fn validate_tree(&mut self) {
