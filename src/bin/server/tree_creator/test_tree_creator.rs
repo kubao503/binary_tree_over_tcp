@@ -3,7 +3,7 @@ use super::*;
 fn get_simple_tree() -> Node {
     let mut tree_creator = TreeCreator::new(1);
     let node_data = NodeData(-1, -1, String::from("root"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
     tree_creator.get_tree()
 }
 
@@ -11,10 +11,10 @@ fn get_complex_tree_creator() -> TreeCreator {
     let mut tree_creator = TreeCreator::new(2);
 
     let node_data = NodeData(-1, -1, String::from("left child"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
 
     let node_data = NodeData(0, -1, String::from("root"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
 
     tree_creator
 }
@@ -23,10 +23,10 @@ fn get_isolated_tree_creator() -> TreeCreator {
     let mut tree_creator = TreeCreator::new(2);
 
     let node_data = NodeData(-1, -1, String::from("left child"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
 
     let node_data = NodeData(-1, -1, String::from("root"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
 
     tree_creator
 }
@@ -35,7 +35,7 @@ fn get_unfinished_tree_creator() -> TreeCreator {
     let mut tree_creator = TreeCreator::new(2);
 
     let node_data = NodeData(-1, -1, String::from("left child"));
-    tree_creator.add_node(node_data);
+    tree_creator.add_node(node_data).unwrap();
 
     tree_creator
 }
@@ -91,5 +91,13 @@ fn test_two_references_to_the_same_node() {
     let mut tree_creator = get_complex_tree_creator();
 
     let node_data = NodeData(0, 1, String::from("super root"));
-    assert_eq!(tree_creator.add_node(node_data), Err("Two references to the same node".to_string()));
+    assert!(tree_creator.add_node(node_data) == Err(TreeCreatorError::MultipleNodeReferences(0)));
+}
+
+#[test]
+fn test_invalid_node_index() {
+    let mut tree_creator = get_complex_tree_creator();
+
+    let node_data = NodeData(1, 9, String::from("super root"));
+    assert!(tree_creator.add_node(node_data) == Err(TreeCreatorError::InvalidNodeIndex(9)));
 }

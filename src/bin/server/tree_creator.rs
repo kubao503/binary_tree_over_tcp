@@ -1,4 +1,7 @@
+mod errors;
+
 use binary_tree::*;
+use errors::*;
 
 pub struct TreeCreator {
     nodes: Vec<Option<Node>>,
@@ -13,7 +16,7 @@ impl TreeCreator {
         }
     }
 
-    pub fn add_node<'a>(&mut self, node_data: NodeData) -> Result<(), String> {
+    pub fn add_node<'a>(&mut self, node_data: NodeData) -> Result<(), TreeCreatorError> {
         let NodeData(left_idx, right_idx, text) = node_data;
         let mut new_node = Node::new(text);
 
@@ -30,14 +33,14 @@ impl TreeCreator {
         Ok(())
     }
 
-    fn take_node(&mut self, index: usize) -> Result<Node, String> {
+    fn take_node(&mut self, index: usize) -> Result<Node, TreeCreatorError> {
         let node = self
             .nodes
             .get_mut(index)
-            .ok_or(format!("Invalid node index: {index}"));
+            .ok_or(TreeCreatorError::InvalidNodeIndex(index));
         node.and_then(|node| {
             node.take()
-                .ok_or(String::from("Two references to the same node"))
+                .ok_or(TreeCreatorError::MultipleNodeReferences(index))
         })
     }
 
