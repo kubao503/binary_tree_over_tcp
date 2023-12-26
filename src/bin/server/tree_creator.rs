@@ -1,7 +1,7 @@
 mod errors;
 
-use binary_tree::*;
-use errors::*;
+use binary_tree::{Node, NodeData};
+use errors::TreeCreatorError;
 
 pub struct TreeCreator {
     nodes: Vec<Option<Node>>,
@@ -10,6 +10,9 @@ pub struct TreeCreator {
 
 impl TreeCreator {
     pub fn new(node_count: usize) -> Self {
+        if node_count == 0 {
+            panic!("Cannot instantiate zero-sized tree")
+        }
         Self {
             nodes: Vec::with_capacity(node_count),
             node_count,

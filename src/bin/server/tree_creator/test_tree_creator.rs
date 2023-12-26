@@ -41,6 +41,12 @@ fn get_unfinished_tree_creator() -> TreeCreator {
 }
 
 #[test]
+#[should_panic(expected = "Cannot instantiate zero-sized tree")]
+fn test_empty_tree_creator() {
+    let _ = TreeCreator::new(0);
+}
+
+#[test]
 fn test_tree_creator() {
     let root = get_simple_tree();
     assert_eq!(root.text, "root");
