@@ -83,7 +83,7 @@ fn test_tree_conectivity() {
     );
     assert_eq!(
         tree_creator.get_tree(),
-        Err(TreeCreatorError::ChildNodeWithoutParent(0))
+        Err(TreeCreationError::ChildNodeWithoutParent(0))
     )
 }
 
@@ -92,7 +92,7 @@ fn test_two_references_to_the_same_node() {
     let mut tree_creator = get_complex_tree_creator();
 
     let node_data = NodeData(0, 1, String::from("super root"));
-    assert!(tree_creator.add_node(node_data) == Err(TreeCreatorError::MultipleNodeReferences(0)));
+    assert!(tree_creator.add_node(node_data) == Err(TreeCreationError::MultipleNodeReferences(0)));
 }
 
 #[test]
@@ -100,7 +100,7 @@ fn test_invalid_node_index() {
     let mut tree_creator = get_complex_tree_creator();
 
     let node_data = NodeData(1, 9, String::from("super root"));
-    assert!(tree_creator.add_node(node_data) == Err(TreeCreatorError::InvalidNodeIndex(9)));
+    assert!(tree_creator.add_node(node_data) == Err(TreeCreationError::InvalidNodeIndex(9)));
 }
 
 #[test]
@@ -110,7 +110,7 @@ fn test_self_referencing_node() {
     let node_data = NodeData(0, 1, String::from("root"));
     assert_eq!(
         tree_creator.add_node(node_data),
-        Err(TreeCreatorError::InvalidNodeIndex(1))
+        Err(TreeCreationError::InvalidNodeIndex(1))
     );
 }
 
@@ -119,7 +119,7 @@ fn test_tree_not_complete() {
     let tree_creator = get_unfinished_tree_creator();
     assert_eq!(
         tree_creator.get_tree(),
-        Err(TreeCreatorError::NotComplete {
+        Err(TreeCreationError::NotComplete {
             expected: 2,
             actual: 1,
         })

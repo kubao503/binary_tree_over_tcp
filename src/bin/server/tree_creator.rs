@@ -1,7 +1,7 @@
-mod errors;
+pub mod errors;
 
 use binary_tree::{Node, NodeData};
-use errors::TreeCreatorError;
+use errors::{TreeCreationError, TreeCreationResult};
 
 pub struct TreeCreator {
     nodes: Vec<Option<Node>>,
@@ -19,7 +19,7 @@ impl TreeCreator {
         }
     }
 
-    pub fn add_node<'a>(&mut self, node_data: NodeData) -> Result<(), TreeCreatorError> {
+    pub fn add_node<'a>(&mut self, node_data: NodeData) -> TreeCreationResult<()> {
         let NodeData(left_idx, right_idx, text) = node_data;
         let mut new_node = Node::new(text);
 
@@ -36,20 +36,20 @@ impl TreeCreator {
         Ok(())
     }
 
-    fn take_node(&mut self, index: usize) -> Result<Node, TreeCreatorError> {
+    fn take_node(&mut self, index: usize) -> TreeCreationResult<Node> {
         let node = self
             .nodes
             .get_mut(index)
-            .ok_or(TreeCreatorError::InvalidNodeIndex(index));
+            .ok_or(TreeCreationError::InvalidNodeIndex(index));
         node.and_then(|node| {
             node.take()
-                .ok_or(TreeCreatorError::MultipleNodeReferences(index))
+                .ok_or(TreeCreationError::MultipleNodeReferences(index))
         })
     }
 
-    fn validate_tree(&mut self) -> Result<(), TreeCreatorError> {
+    fn validate_tree(&mut self) -> TreeCreationResult<()> {
         if self.nodes.len() != self.node_count {
-            return Err(TreeCreatorError::NotComplete {
+            return Err(TreeCreationError::NotComplete {
                 actual: self.nodes.len(),
                 expected: self.node_count,
             });
@@ -61,12 +61,12 @@ impl TreeCreator {
             .enumerate()
             .find(|(_, node)| node.is_some())
         {
-            return Err(TreeCreatorError::ChildNodeWithoutParent(index));
+            return Err(TreeCreationError::ChildNodeWithoutParent(index));
         }
         Ok(())
     }
 
-    pub fn get_tree(mut self) -> Result<Node, TreeCreatorError> {
+    pub fn get_tree(mut self) -> TreeCreationResult<Node> {
         self.validate_tree()?;
         Ok(self.nodes.pop().expect("Tree empty").expect("Root moved"))
     }

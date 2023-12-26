@@ -1,9 +1,9 @@
 mod tree_creator;
 
-use binary_tree::{NodeData, PrintLogger};
+use binary_tree::*;
 use gethostname::gethostname;
 use std::{io::Read, net::*};
-use tree_creator::*;
+use tree_creator::{errors::TreeCreationResult, *};
 
 const INT_SIZE: usize = 4;
 
@@ -14,21 +14,25 @@ fn main() {
     let listener = TcpListener::bind(host_name).expect("Failed to bind");
     if let Ok((stream, address)) = listener.accept() {
         println!("Connection from {address}");
-        handle_connection(stream);
+        match handle_connection(stream) {
+            Ok(_) => (),
+            Err(err) => println!("{err:?}"),
+        };
     }
 }
 
-fn handle_connection(mut stream: TcpStream) {
+fn handle_connection(mut stream: TcpStream) -> TreeCreationResult<()> {
     let node_count = read_node_count(&mut stream);
     let mut tree_creator = TreeCreator::new(node_count.try_into().unwrap());
 
     for _ in 0..node_count {
         let node_data = read_node_data(&mut stream);
-        tree_creator.add_node(node_data).unwrap();
+        tree_creator.add_node(node_data)?;
     }
 
-    let root = tree_creator.get_tree().unwrap();
+    let root = tree_creator.get_tree()?;
     root.print_tree_paths(&mut PrintLogger);
+    Ok(())
 }
 
 fn read_node_count(stream: &mut TcpStream) -> u32 {
