@@ -1,3 +1,4 @@
+#[derive(PartialEq, Debug)]
 pub struct Node {
     pub text: String,
     pub left_child: NodeChild,

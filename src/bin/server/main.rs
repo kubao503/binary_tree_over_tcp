@@ -24,10 +24,10 @@ fn handle_connection(mut stream: TcpStream) {
 
     for _ in 0..node_count {
         let node_data = read_node_data(&mut stream);
-        tree_creator.add_node(node_data);
+        tree_creator.add_node(node_data).unwrap();
     }
 
-    let root = tree_creator.get_tree();
+    let root = tree_creator.get_tree().unwrap();
     root.print_tree_paths(&mut PrintLogger);
 }
 

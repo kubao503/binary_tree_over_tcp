@@ -44,19 +44,28 @@ impl TreeCreator {
         })
     }
 
-    fn validate_tree(&mut self) {
+    fn validate_tree(&mut self) -> Result<(), TreeCreatorError> {
         if self.nodes.len() != self.node_count {
-            panic!("Not all nodes are present");
+            return Err(TreeCreatorError::NotComplete {
+                actual: self.nodes.len(),
+                expected: self.node_count,
+            });
         }
-        let all_without_last = self.nodes.split_last().unwrap().1;
-        if all_without_last.iter().any(|x| x.is_some()) {
-            panic!("Not all non-root nodes have parent");
+        let all_without_last = self.nodes.split_last().expect("Tree is empty").1;
+
+        if let Some((index, _)) = all_without_last
+            .iter()
+            .enumerate()
+            .find(|(_, node)| node.is_some())
+        {
+            return Err(TreeCreatorError::ChildNodeWithoutParent(index));
         }
+        Ok(())
     }
 
-    pub fn get_tree(mut self) -> Node {
-        self.validate_tree();
-        self.nodes.pop().unwrap().unwrap()
+    pub fn get_tree(mut self) -> Result<Node, TreeCreatorError> {
+        self.validate_tree()?;
+        Ok(self.nodes.pop().expect("Tree is empty").unwrap())
     }
 }
 

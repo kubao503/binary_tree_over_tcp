@@ -4,7 +4,7 @@ fn get_simple_tree() -> Node {
     let mut tree_creator = TreeCreator::new(1);
     let node_data = NodeData(-1, -1, String::from("root"));
     tree_creator.add_node(node_data).unwrap();
-    tree_creator.get_tree()
+    tree_creator.get_tree().unwrap()
 }
 
 fn get_complex_tree_creator() -> TreeCreator {
@@ -60,12 +60,11 @@ fn test_complex_tree() {
         [false, true]
     );
 
-    let mut root = tree_creator.get_tree();
+    let mut root = tree_creator.get_tree().unwrap();
     assert_eq!(root.unwrap_left_child().text, "left child");
 }
 
 #[test]
-#[should_panic(expected = "Not all non-root nodes have parent")]
 fn test_tree_conectivity() {
     let tree_creator = get_isolated_tree_creator();
     assert_eq!(
@@ -76,14 +75,10 @@ fn test_tree_conectivity() {
             .collect::<Vec<bool>>(),
         [true, true]
     );
-    tree_creator.get_tree();
-}
-
-#[test]
-#[should_panic(expected = "Not all nodes are present")]
-fn test_unfinished_tree() {
-    let tree_creator = get_unfinished_tree_creator();
-    tree_creator.get_tree();
+    assert_eq!(
+        tree_creator.get_tree(),
+        Err(TreeCreatorError::ChildNodeWithoutParent(0))
+    )
 }
 
 #[test]
@@ -100,4 +95,16 @@ fn test_invalid_node_index() {
 
     let node_data = NodeData(1, 9, String::from("super root"));
     assert!(tree_creator.add_node(node_data) == Err(TreeCreatorError::InvalidNodeIndex(9)));
+}
+
+#[test]
+fn test_tree_not_complete() {
+    let tree_creator = get_unfinished_tree_creator();
+    assert_eq!(
+        tree_creator.get_tree(),
+        Err(TreeCreatorError::NotComplete {
+            expected: 2,
+            actual: 1,
+        })
+    );
 }
