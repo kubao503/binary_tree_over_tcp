@@ -51,7 +51,7 @@ impl TreeCreator {
                 expected: self.node_count,
             });
         }
-        let all_without_last = self.nodes.split_last().expect("Tree is empty").1;
+        let (_, all_without_last) = self.nodes.split_last().expect("Tree empty");
 
         if let Some((index, _)) = all_without_last
             .iter()
@@ -65,7 +65,7 @@ impl TreeCreator {
 
     pub fn get_tree(mut self) -> Result<Node, TreeCreatorError> {
         self.validate_tree()?;
-        Ok(self.nodes.pop().expect("Tree is empty").unwrap())
+        Ok(self.nodes.pop().expect("Tree empty").expect("Root moved"))
     }
 }
 

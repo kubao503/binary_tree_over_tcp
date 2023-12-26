@@ -98,6 +98,17 @@ fn test_invalid_node_index() {
 }
 
 #[test]
+fn test_self_referencing_node() {
+    let mut tree_creator = get_unfinished_tree_creator();
+
+    let node_data = NodeData(0, 1, String::from("root"));
+    assert_eq!(
+        tree_creator.add_node(node_data),
+        Err(TreeCreatorError::InvalidNodeIndex(1))
+    );
+}
+
+#[test]
 fn test_tree_not_complete() {
     let tree_creator = get_unfinished_tree_creator();
     assert_eq!(
