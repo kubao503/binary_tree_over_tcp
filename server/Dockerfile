@@ -1,7 +1,7 @@
 FROM rust
 
-RUN USER=root cargo new --bin tcp_server
-WORKDIR /tcp_server
+RUN USER=root cargo new --bin server
+WORKDIR /server
 
 COPY Cargo.toml Cargo.lock ./
 
@@ -10,7 +10,7 @@ RUN rm -r src/
 
 COPY src/ src/
 
-RUN rm ./target/release/deps/tcp_server*
+RUN rm ./target/release/deps/binary_tree*
 RUN cargo install --path .
 
-CMD ["tcp_server"]
+CMD ["server"]
