@@ -1,12 +1,12 @@
 pub mod tree_creator;
 
 pub struct Node {
-    text: String,
-    left_child: NodeChild,
-    right_child: NodeChild,
+    pub text: String,
+    pub left_child: NodeChild,
+    pub right_child: NodeChild,
 }
 
-type NodeChild = Option<Box<Node>>;
+pub type NodeChild = Option<Box<Node>>;
 pub struct NodeData(pub i32, pub i32, pub String);
 
 impl Node {
@@ -18,7 +18,7 @@ impl Node {
         }
     }
 
-    fn new_child(value: String) -> NodeChild {
+    pub fn new_child(value: String) -> NodeChild {
         Some(Box::new(Self::new(value)))
     }
 
@@ -57,7 +57,6 @@ fn print_tree_paths_child(logger: &mut impl Logger, node: &NodeChild, path_text:
     }
 }
 
-#[allow(dead_code)]
 pub fn get_example_tree() -> Node {
     let mut root = Node::new(".".to_owned());
     root.left_child = Node::new_child(".pl".to_owned());
