@@ -1,6 +1,9 @@
-use binary_tree::{tree_creator::TreeCreator, NodeData, PrintLogger};
+mod tree_creator;
+
+use binary_tree::{NodeData, PrintLogger};
 use gethostname::gethostname;
 use std::{io::Read, net::*};
+use tree_creator::*;
 
 const INT_SIZE: usize = 4;
 

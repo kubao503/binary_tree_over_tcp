@@ -1,4 +1,4 @@
-use super::*;
+use binary_tree::*;
 
 pub struct TreeCreator {
     nodes: Vec<Option<Node>>,

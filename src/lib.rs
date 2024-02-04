@@ -1,5 +1,3 @@
-pub mod tree_creator;
-
 pub struct Node {
     pub text: String,
     pub left_child: NodeChild,
