@@ -23,9 +23,10 @@ fn get_flattened_tree() -> Vec<u8> {
 }
 
 #[test]
-fn test_convert_tree_to_buf() {
+fn test_tree_flattening() {
     let root = get_tree();
-    let buf = convert_tree_to_buf(&root);
+    let flattener = TreeFlattener::from(&root);
+    let buf = flattener.get();
 
     assert_eq!(buf.len(), 40);
     assert_eq!(buf, get_flattened_tree());
