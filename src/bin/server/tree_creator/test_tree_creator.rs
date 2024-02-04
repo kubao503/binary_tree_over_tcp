@@ -44,20 +44,8 @@ fn get_unfinished_tree_creator() -> TreeCreator {
 fn test_tree_creator() {
     let root = get_simple_tree();
     assert_eq!(root.text, "root");
-}
-
-#[test]
-#[should_panic(expected = "Child is None")]
-fn test_tree_creator_left_child() {
-    let mut root = get_simple_tree();
-    root.left();
-}
-
-#[test]
-#[should_panic(expected = "Child is None")]
-fn test_tree_creator_right_child() {
-    let mut root = get_simple_tree();
-    root.right();
+    assert!(root.left_child.is_none());
+    assert!(root.right_child.is_none());
 }
 
 #[test]
@@ -73,7 +61,7 @@ fn test_complex_tree() {
     );
 
     let mut root = tree_creator.get_tree();
-    assert_eq!(root.left().text, "left child");
+    assert_eq!(root.unwrap_left_child().text, "left child");
 }
 
 #[test]

@@ -24,11 +24,11 @@ impl Node {
         Some(Box::new(self))
     }
 
-    fn left(&mut self) -> &mut Self {
+    pub fn unwrap_left_child(&mut self) -> &mut Self {
         self.left_child.as_mut().expect("Child is None")
     }
 
-    fn right(&mut self) -> &mut Self {
+    pub fn unwrap_right_child(&mut self) -> &mut Self {
         self.right_child.as_mut().expect("Child is None")
     }
 
@@ -58,9 +58,9 @@ fn print_tree_paths_child(logger: &mut impl Logger, node: &NodeChild, path_text:
 pub fn get_example_tree() -> Node {
     let mut root = Node::new(".".to_owned());
     root.left_child = Node::new_child(".pl".to_owned());
-    root.left().left_child = Node::new_child(".google".to_owned());
-    root.left().right_child = Node::new_child(".edu".to_owned());
-    root.left().right().left_child = Node::new_child(".pw".to_owned());
+    root.unwrap_left_child().left_child = Node::new_child(".google".to_owned());
+    root.unwrap_left_child().right_child = Node::new_child(".edu".to_owned());
+    root.unwrap_left_child().unwrap_right_child().left_child = Node::new_child(".pw".to_owned());
 
     root
 }
